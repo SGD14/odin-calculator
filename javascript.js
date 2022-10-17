@@ -1,4 +1,3 @@
-let currentDisplayValue = "";
 let storedValue = undefined;
 let currentValue = undefined;
 let storedOperator = '';
@@ -30,69 +29,71 @@ function operate(operator, x, y) {
     return 0;
 }
 
-function updateDisplay() {
-    document.querySelector("#screen").textContent = currentDisplayValue;
+function display(string) {
+    document.querySelector("#screen").textContent = string;
 }
 
 function onNumberClick(number) {
-    if(currentValue === undefined)
-        currentDisplayValue = "";
-
-    currentDisplayValue += number;
-    currentValue = parseInt(currentDisplayValue);
-    updateDisplay();
+    if(!currentValue)
+        currentValue = Number.parseFloat(number);
+    else
+        currentValue = Number.parseFloat("" + currentValue + number);
+    
+    display(currentValue)
 }
 
 function onOperatorClick(operator) {
-    if(storedValue !== undefined && storedOperator && currentValue === undefined){
-        storedOperator = operator;
+    if(currentValue === undefined)
         return;
-    }
 
-    if(storedOperator && storedValue && currentValue) {
+    if(storedValue !== undefined && storedOperator) {
         storedValue = operate(storedOperator, storedValue, currentValue);
-    } else {
+        storedOperator = operator;
+        currentValue = undefined;
+        display(storedValue);
+    } else if(storedValue !== undefined && !storedOperator) {
+        storedOperator = operator;
+    } else if(storedValue === undefined) {
         storedValue = currentValue;
+        storedOperator = operator;
+        currentValue = undefined;
     }
-    
-    storedOperator = operator;
-    currentValue = undefined;
-    currentDisplayValue = "" + storedValue;
-    updateDisplay();
 }
 
 function onEqualClick() {
     if(storedValue === undefined || !storedOperator || currentValue === undefined)
         return;
 
-    let result = operate(storedOperator, storedValue, parseInt(currentDisplayValue));
+    let result = operate(storedOperator, storedValue, currentValue);
 
     storedOperator = "";
     storedValue = undefined;
     currentValue = result;
 
-    currentDisplayValue = result;
-    updateDisplay();
+    display(currentValue);
 }
 
 function onClearClick() {
     storedValue = undefined;
     storedOperator = "";
     currentValue = undefined;
-    currentDisplayValue = "";
-    updateDisplay();
+    display();
 }
 
 function onDelClick() {
-    if(currentDisplayValue) {
-        currentDisplayValue = currentDisplayValue.substring(0, currentDisplayValue.length - 1);
-        
-        if(currentDisplayValue)
-            currentValue = parseInt(currentDisplayValue);
-        else
-            currentValue = undefined;
+    if(currentValue === undefined) {
+        display("");
+        return;
+    }
 
-        updateDisplay();
+    let currentValueString = currentValue.toString();
+
+    if(currentValueString.length > 1) {
+        currentValue = Number.parseFloat(currentValueString.substring(0, currentValueString.length - 1));
+        display("" + currentValue);
+    } else {
+        currentValue = undefined;
+        display("");
     }
 }
 
