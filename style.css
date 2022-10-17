@@ -16,7 +16,7 @@ body {
 }
 
 .calculator > .screen {
-    flex: 1;
+    flex: 1 1 1;
     background-color: white;
     border: 2px solid black;
     display: flex;
@@ -28,6 +28,36 @@ body {
 }
 
 .calculator > .buttons {
-    margin-top: 50px;
-    flex: 4;
+    font-size: 20px;
+    margin-top: 20px;
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 3px;
+}
+
+.calculator > .buttons * {
+    font-size: 28px;
+}
+
+.calculator > .buttons > button {
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.calculator > .buttons > .full-row {
+    grid-column: span 4;
+    margin-bottom: 10px;
+}
+
+.calculator > .buttons > .big-horizontal {
+    grid-column: span 2;
+}
+
+.calculator > .buttons > .big-vertical {
+    grid-row: span 2;
+}
+
+.calculator > .buttons > button.operator {
+    background-color: orange;
 }
