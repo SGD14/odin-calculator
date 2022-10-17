@@ -34,7 +34,7 @@ function display(string) {
 }
 
 function onNumberClick(number) {
-    if(!currentValue)
+    if(!currentValue || !Number.isFinite(currentValue))
         currentValue = Number.parseFloat(number);
     else
         currentValue = Number.parseFloat("" + currentValue + number);
@@ -77,11 +77,11 @@ function onClearClick() {
     storedValue = undefined;
     storedOperator = "";
     currentValue = undefined;
-    display();
+    display("");
 }
 
 function onDelClick() {
-    if(currentValue === undefined) {
+    if(currentValue === undefined || !Number.isFinite(currentValue)) {
         display("");
         return;
     }
