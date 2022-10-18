@@ -1,5 +1,5 @@
 let storedValue = undefined;
-let currentValue = undefined;
+let currentValue = "";
 let storedOperator = '';
 
 function add(x, y) {
@@ -34,41 +34,57 @@ function display(string) {
 }
 
 function onNumberClick(number) {
-    if(!currentValue || !Number.isFinite(currentValue))
-        currentValue = Number.parseFloat(number);
-    else
-        currentValue = Number.parseFloat("" + currentValue + number);
+    if(!Number.parseFloat(currentValue) || !Number.isFinite(Number.parseFloat(currentValue))) {
+        currentValue = "" + number;
+    } else {
+        if(currentValue.includes('.') && currentValue.indexOf('.') < currentValue.length - 2)
+            return;
+
+        currentValue = "" + currentValue + number;
+    }
     
     display(currentValue)
 }
 
+function onDotClick() {
+    if(currentValue.includes('.'))
+        return;
+
+    if(!Number.parseFloat(currentValue) || !Number.isFinite(Number.parseFloat(currentValue)))
+        currentValue = "0";
+
+    currentValue += ".";
+
+    display(currentValue);
+}
+
 function onOperatorClick(operator) {
-    if(currentValue === undefined)
+    if(!currentValue)
         return;
 
     if(storedValue !== undefined && storedOperator) {
-        storedValue = operate(storedOperator, storedValue, currentValue);
+        storedValue = Math.round(operate(storedOperator, storedValue, Number.parseFloat(currentValue)) * 100) / 100;
         storedOperator = operator;
-        currentValue = undefined;
+        currentValue = "";
         display(storedValue);
     } else if(storedValue !== undefined && !storedOperator) {
         storedOperator = operator;
     } else if(storedValue === undefined) {
-        storedValue = currentValue;
+        storedValue = Number.parseFloat(currentValue);
         storedOperator = operator;
-        currentValue = undefined;
+        currentValue = "";
     }
 }
 
 function onEqualClick() {
-    if(storedValue === undefined || !storedOperator || currentValue === undefined)
+    if(storedValue === undefined || !storedOperator || !currentValue)
         return;
 
-    let result = operate(storedOperator, storedValue, currentValue);
+    let result = Math.round(operate(storedOperator, storedValue, Number.parseFloat(currentValue)) * 100) / 100;
 
     storedOperator = "";
     storedValue = undefined;
-    currentValue = result;
+    currentValue = "" + result;
 
     display(currentValue);
 }
@@ -76,23 +92,21 @@ function onEqualClick() {
 function onClearClick() {
     storedValue = undefined;
     storedOperator = "";
-    currentValue = undefined;
+    currentValue = "";
     display("");
 }
 
 function onDelClick() {
-    if(currentValue === undefined || !Number.isFinite(currentValue)) {
+    if(!currentValue || !Number.isFinite(Number.parseFloat(currentValue))) {
         display("");
         return;
     }
 
-    let currentValueString = currentValue.toString();
-
-    if(currentValueString.length > 1) {
-        currentValue = Number.parseFloat(currentValueString.substring(0, currentValueString.length - 1));
-        display("" + currentValue);
+    if(currentValue.length > 1) {
+        currentValue = currentValue.substring(0, currentValue.length - 1);
+        display(currentValue);
     } else {
-        currentValue = undefined;
+        currentValue = "";
         display("");
     }
 }
@@ -102,3 +116,4 @@ document.querySelectorAll(".operator").forEach(element => element.addEventListen
 document.querySelector("#equal-button").addEventListener('click', () => onEqualClick());
 document.querySelector("#clear-button").addEventListener('click', () => onClearClick());
 document.querySelector("#del-button").addEventListener('click', () => onDelClick());
+document.querySelector("#dot-button").addEventListener('click', () => onDotClick());
