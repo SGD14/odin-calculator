@@ -117,3 +117,21 @@ document.querySelector("#equal-button").addEventListener('click', () => onEqualC
 document.querySelector("#clear-button").addEventListener('click', () => onClearClick());
 document.querySelector("#del-button").addEventListener('click', () => onDelClick());
 document.querySelector("#dot-button").addEventListener('click', () => onDotClick());
+
+document.addEventListener('keydown', (e) => {
+    if(Number.isFinite(Number.parseFloat(e.key))) {
+        onNumberClick(e.key);
+        return;
+    }
+
+    switch(e.key) {
+        case '/': onOperatorClick('/'); break;
+        case '*': onOperatorClick('*'); break;
+        case '-': onOperatorClick('-'); break;
+        case '+': onOperatorClick('+'); break;
+        case 'Enter': onEqualClick(); break;
+        case '.': onDotClick(); break;
+        case 'Backspace': onDelClick(); break;
+        case 'Escape': onClearClick(); break;
+    }
+});
